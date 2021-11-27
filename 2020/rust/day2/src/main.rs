@@ -9,23 +9,24 @@ fn main() {
 }
 
 fn evaluate_part_1(string: &str) -> usize {
+    let re = Regex::new(r"^(\d+)-(\d+) ([a-z]): ([a-z]+)$").unwrap();
     return
         string
             .lines()
-            .filter(|x| validate_password_1(x))
+            .filter(|x| validate_password_part_1(x, &re))
             .count()
 }
 
 fn evaluate_part_2(string: &str) -> usize {
+    let re = Regex::new(r"(\d+)-(\d+) ([a-z]): ([a-z]+)").unwrap();
     return
         string
             .lines()
-            .filter(|x| validate_password_2(x))
+            .filter(|x| validate_password_part_2(x, &re))
             .count()
 }
 
-fn validate_password_1(line: &str) -> bool {
-    let re = Regex::new(r"(\d+)-(\d+) ([a-z]): ([a-z]+)").unwrap();
+fn validate_password_part_1(line: &str, re: &Regex) -> bool {
     let caps = re.captures(line).unwrap();
     let min_letter_count = caps[1].parse::<usize>().unwrap();
     let max_letter_count = caps[2].parse::<usize>().unwrap();
@@ -35,8 +36,7 @@ fn validate_password_1(line: &str) -> bool {
     return char_count >= min_letter_count && char_count <= max_letter_count
 }
 
-fn validate_password_2(line: &str) -> bool {
-    let re = Regex::new(r"(\d+)-(\d+) ([a-z]): ([a-z]+)").unwrap();
+fn validate_password_part_2(line: &str, re: &Regex) -> bool {
     let caps = re.captures(line).unwrap();
     let pos_1 = caps[1].parse::<usize>().unwrap();
     let pos_2 = caps[2].parse::<usize>().unwrap();
@@ -46,7 +46,7 @@ fn validate_password_2(line: &str) -> bool {
     let pos_1_valid = password.get(pos_1 - 1).unwrap() == desired_letter;
     let pos_2_valid = password.get(pos_2 - 1).unwrap() == desired_letter;
 
-    return pos_1_valid ^ pos_2_valid
+    return pos_1_valid != pos_2_valid
 }
 
 #[cfg(test)]
