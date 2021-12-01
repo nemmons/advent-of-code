@@ -12,8 +12,7 @@ fun main() {
 
     fun part2(input: List<String>): Int {
         return input.map { it.toInt() }
-            .windowed(3, 1)
-            .map { it.reduce{x,y -> x+y} }
+            .windowed(3, 1) { it.sum() }
             .zipWithNext()
             .filter { pair -> pair.second > pair.first }
             .count()
