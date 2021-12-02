@@ -17,16 +17,18 @@ fn evaluate_part_1(string: &str) -> usize {
         .collect();
 
     let pos: usize = inputs.iter()
-        .filter(|(x, y)| x == "forward")
-        .map(|(x, y)| *y)
+        .filter(|(direction, _)| direction == "forward")
+        .map(|(_, amount)| *amount)
         .sum();
 
-    let minus_depth: usize = inputs.iter().filter(|(x, y)| x == "up")
-        .map(|(x, y)| *y)
+    let minus_depth: usize = inputs.iter()
+        .filter(|(direction, _)| direction == "up")
+        .map(|(_, amount)| *amount)
         .sum();
 
-    let plus_depth: usize = inputs.iter().filter(|(x, y)| x == "down")
-        .map(|(x, y)| *y)
+    let plus_depth: usize = inputs.iter()
+        .filter(|(direction, _)| direction == "down")
+        .map(|(_, amount)| *amount)
         .sum();
 
     let depth = plus_depth - minus_depth;
@@ -44,12 +46,12 @@ fn evaluate_part_2(string: &str) -> usize {
     string
         .lines()
         .map(|line| parse_movement(&line, &re))
-        .for_each(|instruction| parse_instruction(instruction, &mut aim, &mut position, &mut depth));
+        .for_each(|instruction| process_instruction(instruction, &mut aim, &mut position, &mut depth));
 
     return position * depth
 }
 
-fn parse_instruction(instruction: (String, usize), aim: &mut usize, position: &mut usize, depth: &mut usize) {
+fn process_instruction(instruction: (String, usize), aim: &mut usize, position: &mut usize, depth: &mut usize) {
     let (direction, amount) = instruction;
 
     if direction == "forward".parse::<String>().unwrap()
@@ -62,7 +64,6 @@ fn parse_instruction(instruction: (String, usize), aim: &mut usize, position: &m
         *aim += amount;
     }
 }
-
 
 fn parse_movement(line: &str, re: &Regex) -> (String, usize) {
     let captures = re.captures(line).unwrap();
