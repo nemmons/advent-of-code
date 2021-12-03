@@ -11,38 +11,37 @@ fun main() {
             Pair(min.toString(), max.toString())
         }
 
-        val epsilonString = commonUncommonBitPairs.fold("") { acc, pair -> "$acc${pair.first}"}
-        val gammaString = commonUncommonBitPairs.fold("") { acc, pair -> "$acc${pair.second}"}
-
-        val epsilon = Integer.parseInt(epsilonString, 2)
-        val gamma = Integer.parseInt(gammaString, 2)
+        val epsilon = commonUncommonBitPairs
+            .joinToString("") { it.first }
+            .let { Integer.parseInt(it, 2) }
+        val gamma =  commonUncommonBitPairs
+            .joinToString("") { it.second }
+            .let { Integer.parseInt(it, 2) }
 
         return epsilon * gamma
     }
 
-    //todo: Learn some binary and clean this dumpster fire up
+    //TODO - there's way more room to abstract out what's happening below here
     fun part2(input: List<String>): Int {
         var remainingInputForO2GenRating = input.toList()
         var remainingInputForCO2ScubberRating = input.toList()
 
-        for (i in 1..input[0].length) {
-            val mostCommonBit = remainingInputForO2GenRating.groupBy { it[i-1] }.let {
-                if (it['0']?.size == it['1']?.size) {
-                    '1'
-                } else {
-                    it.maxByOrNull { bitCount -> bitCount.value.size }!!.key
-                }
-            }
-            val leastCommonBit = remainingInputForCO2ScubberRating.groupBy { it[i-1] }.let {
-                if (it['0']?.size == it['1']?.size) {
-                    '0'
-                } else {
-                    it.minByOrNull { bitCount -> bitCount.value.size }!!.key
-                }
+        for (i in input[0].indices) {
+            if (remainingInputForO2GenRating.size > 1) {
+                val o2ZerosCount = remainingInputForO2GenRating
+                    .map { it[i] }.filter { it == '0'}.count()
+                val o2OnesCount = remainingInputForO2GenRating.size - o2ZerosCount
+                val mostCommonBit = if (o2OnesCount >= o2ZerosCount) '1' else '0'
+                remainingInputForO2GenRating = remainingInputForO2GenRating.filter { it[i] == mostCommonBit }
             }
 
-            remainingInputForO2GenRating = remainingInputForO2GenRating.filter { it[i-1] == mostCommonBit }
-            remainingInputForCO2ScubberRating = remainingInputForCO2ScubberRating.filter { it[i-1] == leastCommonBit }
+            if (remainingInputForCO2ScubberRating.size > 1) {
+                val co2ZerosCount = remainingInputForCO2ScubberRating
+                    .map { it[i] }.filter { it == '0'}.count()
+                val co2OnesCount = remainingInputForCO2ScubberRating.size - co2ZerosCount
+                val leastCommonBit = if (co2OnesCount >= co2ZerosCount) '0' else '1'
+                remainingInputForCO2ScubberRating = remainingInputForCO2ScubberRating.filter { it[i] == leastCommonBit }
+            }
         }
 
         val o2GenRating = Integer.parseInt(remainingInputForO2GenRating.first(), 2)
