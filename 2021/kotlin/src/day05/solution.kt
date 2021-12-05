@@ -10,16 +10,13 @@ fun main() {
     fun part1(input: List<String>): Int {
         return input.toLines()
             .filter { it.isStraightLine() }
-            .flatMap { it.points() }
-            .groupBy { it }
-            .count { it.value.size > 1}
+            .countOverlappingPoints()
+
     }
 
     fun part2(input: List<String>): Int {
         return input.toLines()
-            .flatMap { it.points() }
-            .groupBy { it }
-            .count { it.value.size > 1}
+            .countOverlappingPoints()
     }
 
     val testInput = readInput("day05/test")
@@ -72,4 +69,10 @@ fun List<String>.toLines() : List<Line> {
         val (x1, y1, x2, y2) = match!!.destructured
         Line(x1.toInt(), y1.toInt(), x2.toInt(), y2.toInt())
     }
+}
+
+fun List<Line>.countOverlappingPoints() : Int {
+    return this.flatMap { it.points() }
+        .groupBy { it }
+        .count { it.value.size > 1}
 }
