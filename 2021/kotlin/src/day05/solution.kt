@@ -1,7 +1,6 @@
 package day05
 
 import utils.readInput
-import java.lang.Integer.min
 
 val regex = """^(\d+),(\d+) -> (\d+),(\d+)$""".toRegex()
 
@@ -11,7 +10,6 @@ fun main() {
         return input.toLines()
             .filter { it.isStraightLine() }
             .countOverlappingPoints()
-
     }
 
     fun part2(input: List<String>): Int {
@@ -34,32 +32,22 @@ data class Line(val x1: Int, val y1: Int, val x2: Int, val y2: Int) {
     }
 
     fun points(): List<Pair<Int,Int>> {
-        if (x1 == x2) {
-            return (min(y1,y2)..y1.coerceAtLeast(y2)).map { y -> Pair(x1, y) }
-        } else if (y1 == y2) {
-            return (min(x1,x2)..x1.coerceAtLeast(x2)).map { x -> Pair(x, y1) }
-        } else {
+        //Check which direction we need to move to get from point 1 to point 2
+        val dx = x1.compareTo(x2) * -1
+        val dy = y1.compareTo(y2) * -1
 
-            val leftMostPoint = if (x1 <= x2) { Pair(x1,y1) } else { Pair(x2, y2) }
-            val rightMostPoint = if (x1 <= x2) { Pair(x2,y2) } else { Pair(x1, y1) }
-            val topMostPoint = if (y1 <= y2) { Pair(x1, y1) } else { Pair(x2, y2) }
+        var x = x1
+        var y = y1
+        val points = mutableListOf<Pair<Int, Int>>()
 
-            //most from leftmost point to rightmost point - see if we need to go up or down
-            val yDirectionModifier = if (leftMostPoint == topMostPoint) 1 else -1
-
-            var x = leftMostPoint.first
-            var y = leftMostPoint.second
-            val points = mutableListOf<Pair<Int, Int>>()
-
-            while (x != rightMostPoint.first && y != rightMostPoint.second) {
-                points.add(Pair(x,y))
-                x += 1
-                y += 1 * yDirectionModifier
-            }
-            points.add(rightMostPoint)
-
-            return points
+        while (!(x == x2 && y == y2)) {
+            points.add(Pair(x,y))
+            x += dx
+            y += dy
         }
+        points.add(Pair(x2,y2))
+
+        return points
     }
 }
 
