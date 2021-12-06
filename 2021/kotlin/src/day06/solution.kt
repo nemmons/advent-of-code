@@ -32,20 +32,9 @@ fun main() {
             .plus(7 to 0)
             .plus(8 to 0)
 
-        return (1..256).fold(groupedFishPool) { prev, _ ->
-            //for each iteration, mostly just shift the map around, being sure to add in the new fish from the prev 0s
-            mapOf(
-                0 to (prev[1] ?: 0),
-                1 to (prev[2] ?: 0),
-                2 to (prev[3] ?: 0),
-                3 to (prev[4] ?: 0),
-                4 to (prev[5] ?: 0),
-                5 to (prev[6] ?: 0),
-                6 to (prev[0] ?: 0) + (prev[7] ?: 0),
-                7 to (prev[8] ?: 0),
-                8 to (prev[0] ?: 0),
-            )
-        }.map { it.value }.sum()
+        return (1..256).fold(groupedFishPool.toDailyFishRecord()) {
+            previousDailyRecord, _ -> previousDailyRecord.getNextDayRecord()
+        }.countFish()
     }
 
     val testInput = readInput("day06/test")
@@ -57,4 +46,48 @@ fun main() {
     println(part2(input))
 }
 
+data class DailyFishRecord(
+    val zero: Long = 0,
+    val one: Long = 0,
+    val two: Long = 0,
+    val three: Long = 0,
+    val four: Long = 0,
+    val five: Long = 0,
+    val six: Long = 0,
+    val seven: Long = 0,
+    val eight: Long = 0
+) {
+    fun getNextDayRecord(): DailyFishRecord {
+        return DailyFishRecord(
+            this.one,
+            this.two,
+            this.three,
+            this.four,
+            this.five,
+            this.six,
+            this.zero + this.seven,
+            this.eight,
+            this.zero
+        )
+    }
 
+    //...okay, well this method arguably implies that this approach was silly, but it sure feels good
+    // from the calling site above!
+    fun countFish(): Long {
+        return this.zero + this.one + this.two + this.three + this.four + this.five + this.six + this.seven+ this.eight
+    }
+}
+
+fun Map<Int, Long>.toDailyFishRecord(): DailyFishRecord {
+    return DailyFishRecord(
+        this.getOrDefault(0, 0),
+        this.getOrDefault(1, 0),
+        this.getOrDefault(2, 0),
+        this.getOrDefault(3, 0),
+        this.getOrDefault(4, 0),
+        this.getOrDefault(5, 0),
+        this.getOrDefault(6, 0),
+        this.getOrDefault(7, 0),
+        this.getOrDefault(8, 0),
+    )
+}
