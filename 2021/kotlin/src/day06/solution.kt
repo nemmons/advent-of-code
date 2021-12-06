@@ -23,12 +23,17 @@ fun main() {
     }
 
     fun part2(input: List<String>): Long {
-        val groupedFishPool: Map<Int, Long> = input[0].split(',').map { it.toInt() }.toMutableList().groupBy { it }
+        //the exponential growth is too big for a kotlin list. In part 2 we store `Long` counts of fish that have each
+        // timer value - no reason to keep track of individual fish. Sadly, i can't take credit for this - I was stumped
+        // and went and got a hint.
+        val groupedFishPool: Map<Int, Long> = input[0].split(',').map { it.toInt() }.toMutableList()
+            .groupBy { it }
             .mapValues { it.value.size.toLong() }
             .plus(7 to 0)
             .plus(8 to 0)
 
         return (1..256).fold(groupedFishPool) { prev, _ ->
+            //for each iteration, mostly just shift the map around, being sure to add in the new fish from the prev 0s
             mapOf(
                 0 to (prev[1] ?: 0),
                 1 to (prev[2] ?: 0),
