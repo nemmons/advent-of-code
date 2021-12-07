@@ -1,5 +1,3 @@
-use std::ops::{Div, Mul};
-
 fn main() {
     println!(
         "Part 1: {}; Part 2: {}",
@@ -9,44 +7,46 @@ fn main() {
 }
 
 fn evaluate_part_1(string: &str) -> isize {
-    let crabs: Vec<isize> = string.split(',')
+    let crabs: Vec<isize> = string
+        .split(',')
         .map(|s| s.parse::<isize>().unwrap())
         .collect();
 
-    crabs.iter()
+    crabs
+        .iter()
         .map(|c| calculate_total_fuel_for_constant_travel_cost(&crabs, c))
-        .min().unwrap()
+        .min()
+        .unwrap()
 }
 
 fn calculate_total_fuel_for_constant_travel_cost(crabs: &Vec<isize>, target_pos: &isize) -> isize {
-    crabs.iter()
-        .map(|c| isize::abs(c - target_pos)).sum::<isize>()
+    crabs
+        .iter()
+        .map(|c| isize::abs(c - target_pos))
+        .sum::<isize>()
 }
 
 fn evaluate_part_2(string: &str) -> isize {
-    let crabs: Vec<isize> = string.split(',')
+    let crabs: Vec<isize> = string
+        .split(',')
         .map(|s| s.parse::<isize>().unwrap())
         .collect();
 
     let max_pos = crabs.iter().max().unwrap();
-    (0..(max_pos+1))
+    (0..(max_pos + 1))
         .map(|c| calculate_total_fuel_for_increasing_travel_cost(&crabs, c))
-        .min().unwrap()
+        .min()
+        .unwrap()
 }
 
 fn calculate_total_fuel_for_increasing_travel_cost(crabs: &Vec<isize>, target_pos: isize) -> isize {
-    (*crabs).iter()
+    (*crabs)
+        .iter()
         .map(|c| {
             let distance = isize::abs(c - target_pos);
-            calculate_travel_cost(distance)
+            distance * (distance + 1) / 2 //1 + 2 + 3 + ... + n = n * (n+1)/2
         })
         .sum::<isize>()
-}
-
-fn calculate_travel_cost(distance: isize) -> isize {
-   distance
-        .mul(distance + 1)
-        .div(2)
 }
 
 #[cfg(test)]
