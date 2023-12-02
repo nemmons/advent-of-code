@@ -9,7 +9,7 @@ fun main() {
 
         return input.map { game ->
             val (label, results) = game.split(':')
-            label to results
+            label.replace("Game ","").toInt() to results
         }.filter { (_, results) ->
             // only keep games with no bad draws
             results.trim().split(';').none { round ->
@@ -19,10 +19,8 @@ fun main() {
                     num.toInt() > limits[color]!!
                 }
             }
-        }.map { (label, _) ->
-            label.replace("Game ","").toInt()
-        }.reduce { acc, num ->
-            acc + num
+        }.fold(0) { total, (gameNum, _) ->
+            total + gameNum
         }
     }
 
