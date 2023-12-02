@@ -9,8 +9,8 @@ fun main() {
     fun part1(input: List<String>): Int {
         return input.map {
             it.parseTokens(validTokensPart1)
-                .let { tokens ->
-                    tokens.first().toInt() * 10 + tokens.last().toInt()
+                .run {
+                    this.first().toInt() * 10 + this.last().toInt()
                 }
         }.reduce { acc, num -> acc + num }
     }
@@ -24,10 +24,10 @@ fun main() {
         }.reduce { acc, num -> acc + num }
     }
 
-    val testInput = readInput("Day01_test")
+    val testInput = readTestInput("Day01")
     check(part1(testInput) == 142)
 
-    val testInput2 = readInput("Day01_test2")
+    val testInput2 = readTestInput("Day01_2")
     check(part2(testInput2) == 281)
 
     val input = readInput("Day01")
