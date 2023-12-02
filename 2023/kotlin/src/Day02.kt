@@ -7,24 +7,23 @@ fun main() {
             "blue" to 14
         )
 
-
-        var sum = 0
-        input.forEach { line ->
-            val (label, results) = line.split(':')
-
-            val badGames = results.trim().split(';').filter { round ->
+        return input.map { game ->
+            val (label, results) = game.split(':')
+            label to results
+        }.filter { (_, results) ->
+            // only keep games with no bad draws
+            results.trim().split(';').none { round ->
+                // find any 'bad draws' (that is, a draw that couldn't actually happen based on the known contents of the bag
                 round.trim().split(',').any { draw ->
                     val (num, color) = draw.trim().split(' ')
                     num.toInt() > limits[color]!!
                 }
             }
-
-            if (badGames.isEmpty()) {
-                sum += label.replace("Game ", "").toInt()
-            }
+        }.map { (label, _) ->
+            label.replace("Game ","").toInt()
+        }.reduce { acc, num ->
+            acc + num
         }
-
-        return sum
     }
 
     fun part2(input: List<String>): Int {
