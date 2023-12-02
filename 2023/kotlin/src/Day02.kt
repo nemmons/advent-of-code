@@ -1,9 +1,12 @@
 
 fun main() {
     fun part1(input: List<String>): Int {
-        val red = 12
-        val green = 13
-        val blue = 14
+        val limits = mapOf(
+            "red" to 12,
+            "green" to 13,
+            "blue" to 14
+        )
+
 
         var sum = 0
         input.forEach { line ->
@@ -12,12 +15,7 @@ fun main() {
             val badGames = results.trim().split(';').filter { round ->
                 round.trim().split(',').any { draw ->
                     val (num, color) = draw.trim().split(' ')
-                    when (color) {
-                        "red" -> num.toInt() > red
-                        "green" -> num.toInt() > green
-                        "blue" -> num.toInt() > blue
-                        else -> throw Exception("unexpected color $color")
-                    }
+                    num.toInt() > limits[color]!!
                 }
             }
 
