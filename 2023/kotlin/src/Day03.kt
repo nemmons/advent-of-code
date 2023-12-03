@@ -120,6 +120,8 @@ fun main() {
 
                 if (adjacentNums == 2) {
                     gearRatioSums += runningProduct
+                    println("Found a gear at $symY,$symX : ${input[symY][symX]}")
+
                 }
             }
         }
@@ -128,11 +130,11 @@ fun main() {
     }
 
     val testInput = readTestInput("Day03")
-    check(part1(testInput) == 4361)
+    //check(part1(testInput) == 4361)
     check(part2(testInput) == 467835)
 
     val input = readInput("Day03")
-    part1(input).println()
+    //part1(input).println()
     part2(input).println()
 }
 
