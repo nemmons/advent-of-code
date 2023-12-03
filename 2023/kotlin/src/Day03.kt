@@ -4,11 +4,9 @@ typealias ColumNumber = Int
 typealias PartNumber = Int
 
 fun main() {
-    val numberRegex= """\d+""".toRegex()
-    val symbolRegex = """[^\d.\n]""".toRegex()
-
-
     fun findPartNumbers(input: List<String>): MutableMap<RowNumber, MutableMap<ColumNumber, PartNumber>> {
+        val numberRegex= """\d+""".toRegex()
+
         val partNumbers = mutableMapOf<RowNumber, MutableMap<ColumNumber, PartNumber>>()
         input.forEachIndexed { i, line ->
             numberRegex.findAll(line).forEach {
@@ -19,7 +17,12 @@ fun main() {
         return partNumbers
     }
 
-    fun findSymbolPositions(input: List<String>): MutableMap<RowNumber, MutableList<Int>> {
+    fun findSymbolPositions(input: List<String>, gearsOnly: Boolean = false): MutableMap<RowNumber, MutableList<Int>> {
+        val symbolRegex = when (gearsOnly) {
+            false -> """[^\d.\n]""".toRegex()
+            true ->"""\*""".toRegex()
+        }
+
         val symbolPositions = mutableMapOf<RowNumber, MutableList<ColumNumber>>()
         input.forEachIndexed{ i, line ->
             symbolRegex.findAll(line).forEach {
@@ -29,6 +32,7 @@ fun main() {
         }
         return symbolPositions
     }
+
 
     fun part1(input: List<String>): Int {
         val numbers = findPartNumbers(input)
@@ -78,11 +82,12 @@ fun main() {
 
     fun part2(input: List<String>): Int {
         val numbers = findPartNumbers(input)
-        val symbols = findSymbolPositions(input)
+
+        val gears = findSymbolPositions(input, true)
 
         var gearRatioSums = 0
 
-        symbols.forEach { (symY, lineSymbols) ->
+        gears.forEach { (symY, lineSymbols) ->
             lineSymbols.forEach { symX ->
                 var adjacentNums = 0
                 var runningProduct = 1
@@ -120,8 +125,6 @@ fun main() {
 
                 if (adjacentNums == 2) {
                     gearRatioSums += runningProduct
-                    println("Found a gear at $symY,$symX : ${input[symY][symX]}")
-
                 }
             }
         }
@@ -130,11 +133,11 @@ fun main() {
     }
 
     val testInput = readTestInput("Day03")
-    //check(part1(testInput) == 4361)
+    check(part1(testInput) == 4361)
     check(part2(testInput) == 467835)
 
     val input = readInput("Day03")
-    //part1(input).println()
+    part1(input).println()
     part2(input).println()
 }
 
