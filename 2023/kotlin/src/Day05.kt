@@ -1,3 +1,5 @@
+import java.time.LocalDateTime
+
 fun main() {
     val labelRegex = "([a-z]+)-to-([a-z]+) map:".toRegex()
 
@@ -102,12 +104,17 @@ fun main() {
     }
 
     val testInput = readTestInput("Day05")
-    //check(part1(testInput) == 35L)
+    check(part1(testInput) == 35L)
     check(part2(testInput) == 46L)
 
     val input = readInput("Day05")
     part1(input).println()
+
+    val startTime = LocalDateTime.now()
     part2(input).println()
+    val endTime = LocalDateTime.now()
+    println(startTime)
+    println(endTime)
 }
 
 data class Range(val start: Long, val end: Long) {
