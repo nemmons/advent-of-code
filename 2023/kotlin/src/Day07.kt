@@ -27,11 +27,11 @@ private enum class HandType(val strength: Int) {
 }
 
 fun main() {
-    fun part1(input: List<String>): Long {
+    fun part1(input: List<String>, useJokers: Boolean = false): Long {
         val handResults = input.map { line ->
             val (hand, bid) = line.trim().split(' ')
 
-            val handType = getHandType(hand)
+            val handType = getHandType(hand, useJokers)
 
             val handStrength =
                 handType.strength.toString() +
@@ -53,15 +53,18 @@ fun main() {
     }
 
     fun part2(input: List<String>): Long {
-       return part1(input)
+       return part1(input, true)
     }
 
     val testInput = readTestInput("Day07")
-    check(part1(testInput) == 6440L)
-//    check(part2(testInput) == 5905L)
+    //check(part1(testInput) == 6440L)
 
     val input = readInput("Day07")
-    part1(input).println()
+    //part1(input).println()
+
+    cardStrengths['J'] = "01"
+
+    check(part2(testInput) == 5905L)
 
     val startTime = LocalDateTime.now()
     part2(input).println()
@@ -76,37 +79,63 @@ private fun sortHand(hand: String) = hand
     .sortedByDescending { cardStrengths[it] }
     .joinToString("")
 
-private fun getHandType(hand: String): HandType {
+private fun getHandType(hand: String, useJokers: Boolean): HandType {
     val freqs = hand.toList()
         .groupBy { it }
-        .entries.associate { (card, grouped) -> card to grouped.size }
+        .entries.map { (card, grouped) -> grouped.size to card }
+        .sortedByDescending { it.first }
+        .toMutableList()
 
-    if (freqs.any { it.value == 5}) {
-       return HandType.FIVE_OF_A_KIND
+
+    val jokerCount = if (useJokers) {
+        freqs.firstOrNull { it.second == 'J' }?.first ?: 0
+    } else 0
+    if (useJokers) {
+        freqs.firstOrNull { it.second == 'J' }?.let {
+            freqs.remove(it)
+            if (freqs.isEmpty()) {
+                return HandType.FIVE_OF_A_KIND
+            }
+        }
     }
 
-    if (freqs.any { it.value == 4}) {
+
+
+    if (freqs.first().first + jokerCount == 5) {
+       return HandType.FIVE_OF_A_KIND
+    }
+    if (freqs.first().first + jokerCount == 4) {
         return HandType.FOUR_OF_A_KIND
     }
 
-    if (freqs.any { it.value == 3}) {
-        val threeOfCard = freqs.entries.first { it.value == 3}.key
-
-        if (freqs.any { it.key != threeOfCard && it.value == 2}) {
+    if (freqs.first().first + jokerCount == 3) {
+        if (freqs[1]!!.first == 2) {
             return HandType.FULL_HOUSE
         }
 
        return HandType.THREE_OF_A_KIND
     }
 
-    val twoCount = freqs.count { it.value == 2 }
+    if (freqs.first().first == 3) {
+        if (freqs[1]!!.first == 1 && jokerCount == 1) {
+            return HandType.FULL_HOUSE
+        }
+
+        return HandType.THREE_OF_A_KIND
+    }
+
+    val twoCount = freqs.count { it.first == 2 }
     if (twoCount == 2) {
+        return HandType.TWO_PAIR
+    } else if (twoCount == 1 && jokerCount == 1) {
         return HandType.TWO_PAIR
     } else if (twoCount == 1) {
         return HandType.PAIR
+    } else if (twoCount == 0 && jokerCount == 1) {
+        return HandType.PAIR
     }
 
-    if (freqs.count { it.value == 1 } < 5) {
+    if (freqs.count { it.first == 1 } < 5 || jokerCount > 0) {
         throw Exception("Got hand $hand wrong try again!")
     }
 
