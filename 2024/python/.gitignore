@@ -1,0 +1,4 @@
+session.cookie
+**/ __pycache__/
+inputs/*
+test_inputs/*
