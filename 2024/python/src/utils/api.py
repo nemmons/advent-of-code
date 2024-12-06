@@ -46,8 +46,8 @@ def create_test_input_file(day: int):
         f.write("[Put the test input here]")
 
 
-def read_test_input(day: int) -> List[str]:
-    path = f"test_inputs/{day:02d}"
+def read_test_input(day: str) -> List[str]:
+    path = f"test_inputs/{day:02}"
 
     with open(path, "r") as f:
         return [line for line in f]
