@@ -42,7 +42,7 @@ def get_input(day: int) -> List[str]:
 def create_test_input_file(day: int):
     path = f"test_inputs/{day:02d}"
 
-    with open(path, "r") as f:
+    with open(path, "w") as f:
         f.write("[Put the test input here]")
 
 
