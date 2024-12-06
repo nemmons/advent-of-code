@@ -3,6 +3,8 @@
 I copied a setup template from https://github.com/tomfran/advent-of-code-setup, the original readme is below
 and the license is preserved in this directory.
 
+Note: if you clone this repo and try to run it, the tests will fail. You'd need to create a test_inputs folder containing files (`01`,`02`,...) containing the test input. TODO: Write a command to autogenerate these.. 
+
 # Advent of code setup
 
 Jumpstart your Advent of Code experience. Automate input downloads and easily create templates for your solutions, so you can focus on solving the challenges.
