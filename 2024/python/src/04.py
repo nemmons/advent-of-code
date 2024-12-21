@@ -53,20 +53,52 @@ def scan(target: str, x: int, y: int, v: Tuple[int, int], input: List[str]) -> b
     return False
 
 
-# def test_part2():
-#     test_input = read_test_input(4)
-#     result = do_the_thing_part_2(test_input)
-#     assert score == 0, f'Expected 0, got {result}'
+def test_part2():
+    test_input = read_test_input(4)
+    result = count_mas_xs(test_input)
+    assert result == 9, f'Expected 9, got {result}'
 
-# def solve_part2():
-#     actual_input = get_input(4)
-#     result = do_the_thing_part_2(actual_input)
-#     print(f'Part 2: {result}')
-# def do_the_thing_part_2(input: List[str]):
-#     return 1
+
+def solve_part2():
+    actual_input = get_input(4)
+    result = count_mas_xs(actual_input)
+    print(f'Part 2: {result}')
+
+
+def count_mas_xs(input: List[str]):
+    input = [line.strip() for line in input]
+
+    xmas_count = 0
+
+    diagonal_coordinate_pairs = [
+        ((-1,1),(1,-1)),
+        ((-1,-1),(1,1)),
+        ((1,-1),(-1,1)),
+        ((1,1),(-1,-1)),
+    ]
+
+    for y in range(1, len(input) -1):
+        for x in range(1, len(input[y]) -1):
+            if input[y][x] == 'A':
+                found_x = False
+                for first, second in diagonal_coordinate_pairs:
+                    if found_x:
+                        break
+
+                    # search each diagonal coordinate pair for M and S (making 'MAS')
+                    if input[y+first[0]][x+first[1]] == 'M' and input[y+second[0]][x+second[1]] == 'S':
+                        # search other diagonal coordinate pairs for a second M and S (making an X out of two 'MAS's)
+                        for other_first, other_second in [pair for pair in diagonal_coordinate_pairs if pair != (first, second)]:
+                            if input[y + other_first[0]][x + other_first[1]] == 'M' and input[y + other_second[0]][x + other_second[1]] == 'S':
+                                xmas_count += 1
+                                found_x = True
+
+
+    return xmas_count
+
 
 test_part1()
 solve_part1()
 
-# test_part2()
-# solve_part2()
+test_part2()
+solve_part2()
